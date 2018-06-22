@@ -1,80 +1,76 @@
-function CoinMarketCap() {}
+// Dependencies :
+const request = require('async-request');
 
-
-CoinMarketCap.prototype.request = require("request");
-CoinMarketCap.prototype.prices = {};
-CoinMarketCap.prototype.listing = {};
-CoinMarketCap.prototype.ttl = 30;
-CoinMarketCap.prototype.expires = {};
-
-CoinMarketCap.prototype.get = function(coin, callback) {
-    var self = this;
-    // Récupère l'identifiant
-    this.getId(coin, function(err, coin_id) {
-        if (coin_id === false) {
-            return callback('nope');
+/**
+ * Class CoinMarketCap
+ *  - abstract symbol -> cmc_coin_id
+ *
+ * Request coinmarketcap.com for prices and listings
+ */
+module.exports = new class CoinMarketCap {
+    /**
+     * Get listing of all listed cmc coins [SYMBOL=>ID]
+     *
+     * @returns {Promise<Map>}
+     */
+    async getListing() {
+        if (typeof this.cmc_listing !== "undefined") {
+            return this.cmc_listing;
         }
 
-        self.getPrice(coin_id, function (err, price) {
-            return callback(null, {
-                'price': price
-            });
-        });
-    });
-};
+        // Request the CMC API
+        let response = await request(this.getApiUrl('listings'));
+        let data = JSON.parse(response.body).data;
 
-CoinMarketCap.prototype.getPrice = function(coin_id, callback) {
-    if (typeof this.prices[coin_id] !== 'undefined' && Date.now() < this.expires[coin_id]) {
-        return callback(null, this.prices[coin_id]);
-    }
-    var self = this;
+        // Transform coin raw data => map
+        return this.cmc_listing = new Map(data.map(coin => [coin.symbol, coin.id]));
+    };
 
-    self.request('https://api.coinmarketcap.com/v2/ticker/' + coin_id + '/?convert=EUR', function (error, response, body) {
-        if (error) return error;
+    /**
+     * Return CMC id of a crypto
+     *
+     * @param {string} symbol
+     * @returns {Promise<int>}
+     */
+    async getIdBySymbol(symbol) {
+        let listing = await this.getListing();
 
-        var data = JSON.parse(body).data;
-
-        if (data == null) {
-            self.prices[coin_id] = 0;
-        } else {
-            self.prices[coin_id] = data.quotes.EUR.price;
-        }
-
-        // On définis le timeout du prix
-        self.expires[coin_id] =  Date.now() + (self.ttl * 1000);
-
-        return callback(null, self.prices[coin_id]);
-    });
-};
-
-CoinMarketCap.prototype.getListing = function(callback) {
-    var self = this;
-    if (self.listing.length > 0) {
-        return callback(null, self.listing);
+        return listing.get(symbol);
     }
 
-    self.request('https://api.coinmarketcap.com/v2/listings/', function (error, response, body) {
-        if (error) callback(error);
+    /**
+     * Return actual price of a crypto
+     *
+     * @param symbol
+     * @returns {Promise<int>}
+     */
+    async getPrice(symbol) {
+        let coin_id = await this.getIdBySymbol(symbol);
 
-        var data = JSON.parse(body).data;
+        return await this.getPriceById(coin_id);
+    }
 
-        data.forEach(function(coin) {
-            self.listing[coin.symbol] = coin.id;
-        });
+    /**
+     * Return current price of a cryp via id
+     *  - Cache it for 30s
+     *
+     * @param coin_id
+     * @returns {Promise<int>}
+     */
+    async getPriceById(coin_id) {
+        let response = await request(this.getApiUrl('ticker/' + coin_id + '/?convert=EUR'));
+        let data = JSON.parse(response.body).data;
 
-        return callback(null, self.listing);
-    });
+        return data == null ? 0 : data.quotes.EUR.price;
+    }
+
+    /**
+     * Return CMC url
+     *
+     * @param uri
+     * @returns {string}
+     */
+    getApiUrl(uri) {
+        return 'https://api.coinmarketcap.com/v2/' + uri;
+    }
 };
-
-CoinMarketCap.prototype.getId = function(coin, callback) {
-    this.getListing(function(err, listing) {
-
-        if (typeof listing[coin] !== 'undefined') {
-            return callback(null, listing[coin]);
-        } else {
-            return callback('nope');
-        }
-    });
-};
-
-module.exports = new CoinMarketCap();
