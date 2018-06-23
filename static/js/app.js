@@ -29,6 +29,8 @@ async function updatePortfolio() {
             numberFormat(data.portfolio.assets[symbol].total)
         ));
     });
+
+    setTimeout(updatePortfolio, 60000 + Math.floor(Math.random() * Math.floor(9999)));
 }
 
 function numberFormat(number) {

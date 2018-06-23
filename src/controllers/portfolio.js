@@ -46,6 +46,10 @@ module.exports = new class Portfolio {
             }
         }
 
+        // Disable caching
+        res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.header("Pragma", "no-cache");
+        res.header("Expires", 0);
         res.send(JSON.stringify({'portfolio' : result}));
     }
 
