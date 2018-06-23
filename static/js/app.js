@@ -16,7 +16,7 @@ async function updatePortfolio() {
 
     // Show total and portfolio id
     $('#portfolio_id').val(data.portfolio.user_id);
-    $('#total').text(`${data.portfolio.total.toFixed(2)}€`);
+    $('#total').text(`${numberFormat(data.portfolio.total)}€`);
 
     // Reset list and show assets ordered
     let $assets = $('#assets');
@@ -24,11 +24,21 @@ async function updatePortfolio() {
     percents.forEach(([symbol,]) => {
         $assets.append(getAssetTemplate(
             symbol,
-            Number.parseFloat(data.portfolio.assets[symbol].price).toFixed(2),
-            Number.parseFloat(data.portfolio.assets[symbol].quantity).toFixed(2),
-            Number.parseFloat(data.portfolio.assets[symbol].total).toFixed(2)
+            numberFormat(data.portfolio.assets[symbol].price),
+            numberFormat(data.portfolio.assets[symbol].quantity),
+            numberFormat(data.portfolio.assets[symbol].total)
         ));
     });
+}
+
+function numberFormat(number) {
+    number = Number.parseFloat(number);
+
+    if (number >= 1) {
+        return number.toFixed(2);
+    }
+
+    return number.toPrecision(3);
 }
 
 function addAsset(symbol, quantity) {
