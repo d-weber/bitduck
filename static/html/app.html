@@ -12,7 +12,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <!-- Bootstrap CSS, tuned by BootSwatch Go https://bootswatch.com/ <3 -->
-        <link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.min.css" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.1/darkly/bootstrap.min.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css">
+
 
         <!-- App CSS -->
         <link rel="stylesheet" href="/static/css/app.css" crossorigin="anonymous">
@@ -20,46 +22,50 @@
         <title>BitDuck</title>
     </head>
     <body>
-            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
                 <a class="navbar-brand" href="#">BitDuck</a>
-                <div>
-                    <form class="form-inline">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="basic-portfolio_id_help">#</span>
-                            </div>
-                            <input id="portfolio_id" class="form-control mr-sm-2 text-right" type="text" placeholder="Portfolio ID" aria-describedby="portfolio_id_help">
-                        </div>
-                    </form>
+                <div style="float:right">
+                    <span id="porfolio_id">#</span>
                 </div>
             </nav>
-        <div class="container mt-3">
             <div id="alert" class="alert alert-danger fade d-none" role="alert"></div>
 
-            <div class="card mb-3 border-info">
-                <h3 class="card-header">
+            <div class="card mb-3">
+                <h3 class="card-header bg-primary">
                     <div class="row">
                         <div class="col-sm">
                             My Portfolio
                         </div>
                         <div class="col-sm text-right">
-                            <span id="total" class="text-success">0,0€</span>
+                            <span id="total">0,0</span>€
                         </div>
                     </div>
                 </h3>
-                <ul id="assets-title" class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <span class="text-primary text-left mr-10 symbol">SYMBOL</span>
-                        <span class="text-primary text-right ml-10 price">PRICE</span>
-                        <span class="text-primary text-right ml-10 quantity">QTY</span>
-                        <span class="text-primary text-right ml-10 total">TOTAL</span>
-                    </li>
-                </ul>
-                <ul id="assets" class="list-group list-group-flush">
-                    <li class="list-group-item text-center loading">loading...</li>
-                </ul>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="icon"><i class="fas fa-trash"></i></th>
+                            <th scope="col">SYMBOL</th>
+                            <th scope="col" class="text-right">PRICE</th>
+                            <th scope="col" class="text-right">QTY <i class="fas fa-pen"></i></th>
+                            <th scope="col" class="text-right">TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="assets">
+                        <tr>
+                            <td colspan="5" id="loading" class="text-center">loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
                 <ul id="add-asset" class="list-group list-group-flush">
-                    <li class="list-group-item"><button type="button" class="btn btn-success float-right">ADD ASSET</button></li>
+                    <li class="list-group-item text-right">
+                        <form>
+                            <input type="text" class="form-control" placeholder="SYMBOL" id="input-symbol">
+                            <input type="text" class="form-control" placeholder="QTY" id="input-qty">
+                            <button type="submit" class="btn btn-primary">ADD <i class="fas fa-plus-square"></i></button>
+                        </form>
+                    </li>
                 </ul>
             </div>
             <p class="text-info text-center">Made with love <3</p>

@@ -9,20 +9,6 @@
     opacity: 1;
 }
 
-#assets-title span {
-    display: inline-block;
-    width: 24%;
-}
-#assets span {
-    display: inline-block;
-    width: 24%;
-    font-size: 1.5em;
-}
-
-#assets span a:hover {
-    color:#00bc8c;
-}
-
 .blink_red {
     animation: blinker_red 2s linear;
 }
@@ -35,4 +21,29 @@
 }
 @keyframes blinker_green {
     50% { color: greenyellow; }
+}
+.fa-minus:hover {
+    color: red;
+}
+
+.icon {
+    width : 1%
+}
+
+.table {
+    margin-bottom: 0px;
+}
+
+#input-symbol {
+
+    display: inline-block;
+    width: 30%;
+}
+#input-qty {
+    display: inline-block;
+    width: 20%;
+}
+
+button {
+    margin-top: -4px;
 }
