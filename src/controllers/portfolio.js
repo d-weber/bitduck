@@ -39,7 +39,15 @@ module.exports = new class Portfolio {
             return obj
         }, {'assets': {}, 'total':0, 'user_id': req.user_id});
 
-        res.send(JSON.stringify({'portfolio' : result}));
+        // Calculate percents
+        for (let asset in result.assets) {
+            if (result.assets.hasOwnProperty(asset)) {
+                result.assets[asset]['percent'] = result.assets[asset].total / result.total;
+            }
+        }
+
+        res.send(JSON.stringify({
+            'portfolio' : result}));
     }
 
     /**
