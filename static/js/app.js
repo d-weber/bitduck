@@ -3,24 +3,32 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function updatePortfolio() {
+    // Get portfolio data
     let response = await fetch('/portfolio');
     let data = await response.json();
 
+    // Sort by percents
+    let percents = [];
+    for (let asset in data.portfolio.assets) {
+        percents.push([asset, data.portfolio.assets[asset].percent])
+    }
+    percents.sort(([,a], [,b]) => b - a);
+
+    // Show total and portfolio id
     $('#portfolio_id').val(data.portfolio.user_id);
     $('#total').text(`${data.portfolio.total.toFixed(2)}€`);
 
+    // Reset list and show assets ordered
     let $assets = $('#assets');
     $assets.empty();
-    for (let asset in data.portfolio.assets) {
-        if (data.portfolio.assets.hasOwnProperty(asset)) {
-            $assets.append(getAssetTemplate(
-                asset,
-                Number.parseFloat(data.portfolio.assets[asset].price).toFixed(2),
-                Number.parseFloat(data.portfolio.assets[asset].quantity).toFixed(2),
-                Number.parseFloat(data.portfolio.assets[asset].total).toFixed(2)
-            ));
-        }
-    }
+    percents.forEach(([symbol,]) => {
+        $assets.append(getAssetTemplate(
+            symbol,
+            Number.parseFloat(data.portfolio.assets[symbol].price).toFixed(2),
+            Number.parseFloat(data.portfolio.assets[symbol].quantity).toFixed(2),
+            Number.parseFloat(data.portfolio.assets[symbol].total).toFixed(2)
+        ));
+    });
 }
 
 function addAsset(symbol, quantity) {
