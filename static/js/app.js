@@ -16,21 +16,42 @@ async function updatePortfolio() {
 
     // Show total and portfolio id
     $('#portfolio_id').val(data.portfolio.user_id);
-    $('#total').text(`${numberFormat(data.portfolio.total)}€`);
+    changeNumber($('#total'), data.portfolio.total, '€');
 
     // Reset list and show assets ordered
     let $assets = $('#assets');
-    $assets.empty();
-    percents.forEach(([symbol,]) => {
-        $assets.append(getAssetTemplate(
-            symbol,
-            numberFormat(data.portfolio.assets[symbol].price),
-            numberFormat(data.portfolio.assets[symbol].quantity),
-            numberFormat(data.portfolio.assets[symbol].total)
-        ));
+    $('#assets .loading').remove();
+    percents.forEach(async ([symbol,]) => {
+        let $asset = $(`#asset-${symbol}`);
+        if ($asset.length) {
+            changeNumber($asset.children('.price'), data.portfolio.assets[symbol].price, '€');
+            changeNumber($asset.children('.quantity'), data.portfolio.assets[symbol].quantity);
+            changeNumber($asset.children('.total'), data.portfolio.assets[symbol].total, '€');
+        } else {
+            $assets.append(getAssetTemplate(
+                symbol,
+                numberFormat(data.portfolio.assets[symbol].price),
+                numberFormat(data.portfolio.assets[symbol].quantity),
+                numberFormat(data.portfolio.assets[symbol].total)
+            ));
+        }
     });
 
-    setTimeout(updatePortfolio, 60000 + Math.floor(Math.random() * Math.floor(9999)));
+    setTimeout(await updatePortfolio, 9000 + Math.floor(Math.random() * Math.floor(1000)));
+}
+
+function changeNumber(selector, value, suffix = '') {
+    let old_value = numberFormat(selector.text());
+    let new_value = numberFormat(value);
+    let delta = new_value - old_value;
+
+    if (delta !== 0) {
+        selector.text(`${new_value}${suffix}`);
+        let color = delta > 0 ? 'green' : 'red';
+        selector.addClass(`blink_${color}` ).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+            selector.removeClass(`blink_${color}`);
+        });
+    }
 }
 
 function numberFormat(number) {
@@ -66,4 +87,8 @@ function showAlert(message) {
     window.setTimeout(() => {
         $alert.removeClass('in');
     }, 3000)
+}
+
+async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }

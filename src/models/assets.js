@@ -22,7 +22,7 @@ module.exports = new class Assets {
         // Or get it from CoinMarketCap
         if (!price) {
             price = await cmc.getPrice(symbol);
-            await redis.set(`asset:${symbol}:current_price`, price, 'EX', 60);
+            await redis.set(`asset:${symbol}:current_price`, price, 'EX', 10);
             await redis.zadd(this.getMostUsedKey(), Date.now(), symbol);
         }
 

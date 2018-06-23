@@ -22,3 +22,17 @@
 #assets span a:hover {
     color:#00bc8c;
 }
+
+.blink_red {
+    animation: blinker_red 2s linear;
+}
+@keyframes blinker_red {
+    50% { color: red; }
+}
+
+.blink_green {
+    animation: blinker_green 2s linear;
+}
+@keyframes blinker_green {
+    50% { color: greenyellow; }
+}
