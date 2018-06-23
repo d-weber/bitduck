@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function updatePortfolio() {
     // Get portfolio data
-    let response = await fetch('/portfolio');
+    let response = await fetch('/portfolio',{credentials: 'same-origin'});
     let data = await response.json();
 
     // Sort by percents

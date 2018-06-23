@@ -71,27 +71,8 @@ App.prototype.start = function(workerId) {
         req.user_id = req.cookies.user_id === undefined ? uniqid() : req.cookies.user_id;
 
         // Set or reset the 🍪 for 1 Month
-        res.cookie('user_id', req.user_id, { maxAge: 2592000000, httpOnly: true });
+        res.cookie('user_id', req.user_id, { maxAge: 2592000000, httpOnly: false });
         app.log('User ID :  ' + req.user_id, 'info');
-
-        req.user_id = 'sktwi1syejiq7as5i'; // Dev Bitch
-
-        next();
-    });
-
-    /**
-     * Set user_id for portability
-     */
-    app.post('/user_id', (req, res, next) => {
-        if (req.body.user_id === undefined) {
-            next("Bad user_id format");
-        }
-
-        // Set or reset the 🍪 for 1 Month
-        res.cookie('user_id', req.user_id, { maxAge: 2592000000, httpOnly: true });
-        app.log('User ID :  ' + req.user_id, 'info');
-
-        req.user_id = req.body.user_id;
 
         next();
     });
