@@ -1,25 +1,76 @@
+<!--
+    /!\ WARNING /!\
+    I'm not a frontend dev and I don't want to work as React or VueJs dev
+    I usually keep frontend things stupid-simple
+    So, this is the minimum I needed to get it working
+ -->
 <!doctype html>
 <html lang="en">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+        <!-- Bootstrap CSS, tuned by BootSwatch Go https://bootswatch.com/ <3 -->
+        <link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.min.css" crossorigin="anonymous">
 
-    <!-- App CSS -->
-    <link rel="stylesheet" href="/static/css/app.css" crossorigin="anonymous">
+        <!-- App CSS -->
+        <link rel="stylesheet" href="/static/css/app.css" crossorigin="anonymous">
 
-    <title>BitDuck</title>
-</head>
-<body>
-<h1>BitDuck</h1>
+        <title>BitDuck</title>
+    </head>
+    <body>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+                <a class="navbar-brand" href="#">BitDuck</a>
+                <div>
+                    <form class="form-inline my-2 my-lg-0">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-portfolio_id_help">#</span>
+                            </div>
+                            <input id="portfolio_id" class="form-control mr-sm-2 text-right" type="text" placeholder="Portfolio ID" aria-describedby="portfolio_id_help">
+                        </div>
+                    </form>
+                </div>
+            </nav>
+        <div class="container mt-3">
+            <div id="alert" class="alert alert-danger fade d-none" role="alert"></div>
 
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
-</body>
+            <div class="card mb-3 border-info">
+                <h3 class="card-header">
+                    <div class="row">
+                        <div class="col-sm">
+                            My Portfolio
+                        </div>
+                        <div class="col-sm text-right">
+                            <span id="total" class="text-success">0,0€</span>
+                        </div>
+                    </div>
+                </h3>
+                <ul id="assets-title" class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <span class="text-primary text-left mr-10 symbol">SYMBOL</span>
+                        <span class="text-primary text-right ml-10 price">PRICE</span>
+                        <span class="text-primary text-right ml-10 quantity">QTY</span>
+                        <span class="text-primary text-right ml-10 total">TOTAL</span>
+                    </li>
+                </ul>
+                <ul id="assets" class="list-group list-group-flush">
+                    <li class="list-group-item text-center">loading...</li>
+                </ul>
+                <ul id="add-asset" class="list-group list-group-flush">
+                    <li class="list-group-item"><button type="button" class="btn btn-success float-right">ADD ASSET</button></li>
+                </ul>
+            </div>
+            <p class="text-info text-center">Made with love <3</p>
+        </div>
+
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
+        <!-- App JS -->
+        <script src="/static/js/app.js" crossorigin="anonymous"></script>
+    </body>
 </html>

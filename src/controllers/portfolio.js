@@ -37,7 +37,7 @@ module.exports = new class Portfolio {
             obj['total'] += obj['assets'][symbol].total;
 
             return obj
-        }, {'assets': {}, 'total':0});
+        }, {'assets': {}, 'total':0, 'user_id': req.user_id});
 
         res.send(JSON.stringify({'portfolio' : result}));
     }

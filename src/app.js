@@ -80,7 +80,24 @@ App.prototype.start = function(workerId) {
     });
 
     /**
-     * Initial route
+     * Set user_id for portability
+     */
+    app.post('/user_id', (req, res, next) => {
+        if (req.body.user_id === undefined) {
+            next("Bad user_id format");
+        }
+
+        // Set or reset the 🍪 for 1 Month
+        res.cookie('user_id', req.user_id, { maxAge: 2592000000, httpOnly: true });
+        app.log('User ID :  ' + req.user_id, 'info');
+
+        req.user_id = req.body.user_id;
+
+        next();
+    });
+
+    /**
+     * Default entry point
      */
     app.get('/',(req, res, next) => {
         res.sendFile(path.join(__dirname + '/../static/html/app.html'));

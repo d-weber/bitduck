@@ -1,3 +1,24 @@
-body {
-    background-color: #151515;
+.fade {
+    opacity: 0;
+    -webkit-transition: opacity 0.15s linear;
+    -moz-transition: opacity 0.15s linear;
+    -o-transition: opacity 0.15s linear;
+    transition: opacity 0.15s linear;
+}
+.fade.in {
+    opacity: 1;
+}
+
+#assets-title span {
+    display: inline-block;
+    width: 24%;
+}
+#assets span {
+    display: inline-block;
+    width: 24%;
+    font-size: 1.5em;
+}
+
+#assets span a:hover {
+    color:#00bc8c;
 }
