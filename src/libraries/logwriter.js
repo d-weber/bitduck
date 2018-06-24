@@ -58,7 +58,7 @@ LogWriter.prototype.setLogLevels = function(levels) {
             "error"
         ];
     }
-    return this.log("Log levels utilisés : " + JSON.stringify(this.logLevels), "info");
+    return this.log("Log levels : " + JSON.stringify(this.logLevels), "info");
 };
 
 

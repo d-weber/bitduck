@@ -23,11 +23,11 @@ module.exports = class App{
         this.express = express();
 
         // Set Config Path
-        config.setRootPath(__dirname + '/..');
+        this.config = new config(`${__dirname}/..`);
 
         // Look for the app version directly in package.json
         // Se we can start it without npm
-        this.version = require(path.join(config.getRootPath(), 'package.json')).version;
+        this.version = require(path.join(this.config.getRootPath(), 'package.json')).version;
 
         this.setLog();
         this.setRedis();
@@ -128,12 +128,12 @@ module.exports = class App{
     // Set Redis lib
     setRedis(){
         this.redis = require('./libraries/redis');
-        this.redis.setConfig(config.getValue('redis'));
+        this.redis.setConfig(this.config.getValue('redis'));
     }
 
     // Set logWriter
     setLog(){
-        logWriter.setLogLevels(config.getValue('logLevels'));
+        logWriter.setLogLevels(this.config.getValue('logLevels'));
         this.log = (msg, level) => {
             logWriter.log(msg, level);
         };

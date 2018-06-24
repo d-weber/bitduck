@@ -11,8 +11,7 @@ const cluster = require('cluster');
 class Cluster {
     constructor() {
         // Set config
-        config.setRootPath(__dirname + "/..");
-        this.config = config.getValue("app");
+        this.config = new config(`${__dirname}/..`).getValue('app');
 
         // Debug flag
         this.debug = process.execArgv.indexOf("--debug") !== -1;
