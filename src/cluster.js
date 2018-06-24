@@ -1,37 +1,48 @@
 "use strict";
 
-let cluster = require("cluster");
-let config = require("./libraries/config");
-let app = require("./app.js");
+// Dependencies
+const config = require("./libraries/config");
+const app = require("./app.js");
+const cluster = require('cluster');
 
-// Flag de debug
-let debug = process.execArgv.indexOf("--debug") !== -1;
+/**
+ * Launch a cluster of n app.js workers
+ */
+class Cluster {
+    constructor() {
+        // Set config
+        config.setRootPath(__dirname + "/..");
+        this.config = config.getValue("app");
 
-// Types de workers
-let worker_types = new Map();
+        // Debug flag
+        this.debug = process.execArgv.indexOf("--debug") !== -1;
 
-if (cluster.isMaster) { // Master Process
-
-    // Chargement de la config
-    config.setRootPath(__dirname + "/..");
-    let app_config = config.getValue("app");
-
-    // Crée un worker pour chaque core
-    for (let i = 0; i < app_config.cores; i += 1) {
-        cluster.fork();
+        // Switch following thread type
+        if (cluster.isMaster) {
+            this.createWorkers();
+        } else {
+            this.startWorker(cluster.worker.id);
+        }
     }
+    createWorkers(){
+        // Star a worker for each core
+        for (let i = 0; i < this.config.cores; i += 1) {
+            cluster.fork();
+        }
 
-    // Si un worker tombe, on le remplace
-    cluster.on("exit", function() {
-        cluster.fork();
-    });
-
-} else { // Worker Process
-    // Si on est en debug, on définit le port de debug de chaque worker
-    if (debug) {
-        process._debugPort = 5858 + cluster.worker.id;
+        // On worker exit, start another
+        cluster.on("exit", function() {
+            cluster.fork();
+        });
     }
-    app.start(cluster.worker.id);
+    startWorker(id){
+        if (this.debug) {
+            process._debugPort = `5858${id}`;
+        }
+        app.start(id);
+    }
 }
+
+new Cluster();
 
 
