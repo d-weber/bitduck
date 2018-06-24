@@ -1,3 +1,5 @@
+"use strict";
+
 // Dependencies
 const cmc = require('../libraries/coinmarketcap');
 

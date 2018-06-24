@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser');
 const uniqid = require('uniqid');
 const logWriter = require('./libraries/logwriter');
 const config = require('./libraries/config');
+const redis = require('./libraries/redis');
 
 /**
  * Application
@@ -127,15 +128,15 @@ module.exports = class App{
 
     // Set Redis lib
     setRedis(){
-        this.redis = require('./libraries/redis');
-        this.redis.setConfig(this.config.getValue('redis'));
+        this.redis = new redis(this.config.getValue('redis'));
     }
 
     // Set logWriter
     setLog(){
-        logWriter.setLogLevels(this.config.getValue('logLevels'));
+        this.logWriter = new logWriter(this.config.getValue('logLevels'));
+        // Easy access
         this.log = (msg, level) => {
-            logWriter.log(msg, level);
+            this.logWriter.log(msg, level);
         };
     }
 

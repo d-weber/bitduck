@@ -7,14 +7,9 @@ const redis = require('async-redis');
  *
  * @type {Redis}
  */
-module.exports = new class Redis {
+module.exports = class Redis {
 
-    /**
-     * Config setter
-     *
-     * @param config
-     */
-    setConfig(config) {
+    constructor (config) {
         this.config = config;
     }
 
