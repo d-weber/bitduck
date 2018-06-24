@@ -1,146 +1,148 @@
 'use strict';
-/*eslint no-console:0*/
 
-function App() {}
+// Dependencies
+const express = require('express');
+const path = require('path');
+const responseTime = require('response-time');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const uniqid = require('uniqid');
+const logWriter = require('./libraries/logwriter');
+const config = require('./libraries/config');
 
-// Fonction de démarrage du MS
-App.prototype.start = function(workerId) {
-    let express = require('express');
-    let app = express();
-    let path = require('path');
-    let responseTime = require('response-time');
-    let bodyParser = require('body-parser');
-    let cookieParser = require('cookie-parser');
-    let uniqid = require('uniqid');
+/**
+ * Application
+ *
+ * @type {module.App}
+ */
+module.exports = class App{
+    constructor(worker_id, host, port){
+        this.worker_id = worker_id;
+        this.host = host;
+        this.port = port;
+        this.express = express();
 
-    /**
-     * Injection de dépendances
-     */
-    try {
-        // Chargement de la config
-        let config = require('./libraries/config');
+        // Set Config Path
         config.setRootPath(__dirname + '/..');
 
-        // Chargement du logWriter
-        app.logWriter = require('./libraries/logwriter');
-        app.logWriter.setLogLevels(config.getValue('logLevels'));
-        app.log = (msg, level) => {
-            app.logWriter.log(msg, level);
-        };
+        // Look for the app version directly in package.json
+        // Se we can start it without npm
+        this.version = require(path.join(config.getRootPath(), 'package.json')).version;
 
-        // Définition du port de l'application
-        let msConfig = config.getValue('app');
-        app.port = msConfig.port;
-        if (!msConfig.host) {
-            throw new Error('Le champ host est manquant dans la configuration du microservice');
-        }
-        app.host = msConfig.host;
-
-        app.redis = require('./libraries/redis');
-        app.redis.setConfig(config.getValue('redis'));
-
-        // On va chercher la version directement dans le package afin de pouvoir
-        // lancer la commande sans passer par npm
-        app.version = require(path.join(config.getRootPath(), 'package.json')).version;
-
-    } catch (err) {
-        console.log(err);
-        throw err;
+        this.setLog();
+        this.setRedis();
+        this.setExpressDependencies();
+        this.setExpressResponseTime();
+        this.setExpressStaticAssets();
+        this.setExpressCookieMiddleware();
+        this.setExpressRoutes();
+        this.setExpressErrorHandlers();
     }
 
-    app.use(bodyParser.json());
-    app.use(cookieParser());
-
-    /**
-     * Log du temps de réponse
-     */
-    app.use(responseTime((req, res, time) => {
-        app.log('Requête ' + req.method + ' ' + req.url + ' temps de réponse : ' + time + ' ms', 'info');
-    }));
-
-    /**
-     * Assets
-     */
-    app.use('/static', express.static(__dirname + '/../static/'));
-
-    /**
-     * Get user id
-     */
-    app.all('*', (req, res, next)=> {
-        // Check if we have the user uniqid in 🍪, or get one
-        req.user_id = req.cookies.user_id === undefined ? uniqid() : req.cookies.user_id;
-
-        // Set or reset the 🍪 for 1 Month
-        res.cookie('user_id', req.user_id, { maxAge: 2592000000, httpOnly: false });
-        app.log('User ID :  ' + req.user_id, 'info');
-
-        next();
-    });
-
-    /**
-     * Default entry point
-     */
-    app.get('/',(req, res, next) => {
-        res.sendFile(path.join(__dirname + '/../static/html/app.html'));
-    });
-
-    /**
-     * Routes
-     */
-    app.get('/portfolio', (req, res, next) => { // Get user Portfolio
-        return require('./controllers/portfolio').get(app, req, res).catch((err)=> {next(err)});
-    });
-    app.post('/portfolio', (req, res, next) => { // Add asset to user Portfolio
-        return require('./controllers/portfolio').add(app, req, res).catch((err)=> {next(err)});
-    });
-
-    /**
-     * Route Status
-     */
-    app.get('/state', (req, res) => {
-        res.send({
-            type: 'Duck',
-            status: 'running',
-            version: app.version
-        });
-    });
-
-    /**
-     * Error Handler
-     */
-    app.use((err, req, res, _next) => {
-        if (err) {
-            app.log(err.message, 'error');
-            res.status(500);
-            res.send({
-                errors: {
-                    message: err.message
-                }
-            });
-        }
-    });
-
-    /**
-     * Error 404 Handler
-     */
-    app.all('*', (req, res) => {
-        res.status(404);
-        res.send({
-            errors: {
-                message: 'Not Found'
+    // Set express router error handlers
+    setExpressErrorHandlers(){
+        // Error handler
+        this.express.use((err, req, res, _next) => {
+            if (err) {
+                this.log(err.message, 'error');
+                res.status(500);
+                res.send({
+                    errors: {
+                        message: err.message
+                    }
+                });
             }
         });
-    });
 
-    /**
-     * Démarrage du MS
-     */
-    // 511 correspond à la valeur par défaut de la longueur de la queue des
-    // connexions en attentes.
-    app.listen(app.port, app.host, 511, () => {
-        app.log('Worker du ms #' + workerId + ' démarré sur : ' + app.host + ':' +
-            app.port, 'info');
-    });
+        // 404 Handler
+        this.express.all('*', (req, res) => {
+            res.status(404);
+            res.send({
+                errors: {
+                    message: 'Not Found'
+                }
+            });
+        });
+    }
+
+    // Set express routes
+    setExpressRoutes(){
+        // Entry point
+        this.express.get('/',(req, res, next) => {
+            res.sendFile(path.join(__dirname + '/../static/html/app.html'));
+        });
+
+        // Get portfolio
+        this.express.get('/portfolio', (req, res, next) => { // Get user Portfolio
+            return require('./controllers/portfolio').get(this, req, res).catch((err)=> {next(err)});
+        });
+
+        // Update portfolio
+        this.express.post('/portfolio', (req, res, next) => { // Add asset to user Portfolio
+            return require('./controllers/portfolio').add(this, req, res).catch((err)=> {next(err)});
+        });
+
+        // Status
+        this.express.get('/state', (req, res) => {
+            res.send({
+                type: 'Duck',
+                status: 'running',
+                version: this.version
+            });
+        });
+    }
+
+    // Set portfolio_id cookie handler middleware
+    setExpressCookieMiddleware(){
+        this.express.all('*', (req, res, next)=> {
+            // Check if we have the user uniqid in 🍪, or get one
+            req.user_id = req.cookies.user_id === undefined ? uniqid() : req.cookies.user_id;
+
+            // Set or reset the 🍪 for 1 Month
+            res.cookie('user_id', req.user_id, { maxAge: 2592000000, httpOnly: false });
+            this.log('User ID :  ' + req.user_id, 'info');
+
+            next();
+        });
+    }
+
+    // Set Uri for static assets served by express
+    setExpressStaticAssets(){
+        this.express.use('/static', express.static(__dirname + '/../static/'));
+    }
+
+    // Set response time infos at each call
+    setExpressResponseTime(){
+        this.express.use(responseTime((req, res, time) => {
+            this.log(`Request ${req.method} ${req.url} processed in ${time}ms`, 'info');
+        }));
+    }
+
+    // Set Express Dependencies
+    setExpressDependencies()
+    {
+        this.express.use(bodyParser.json());
+        this.express.use(cookieParser());
+    }
+
+    // Set Redis lib
+    setRedis(){
+        this.redis = require('./libraries/redis');
+        this.redis.setConfig(config.getValue('redis'));
+    }
+
+    // Set logWriter
+    setLog(){
+        logWriter.setLogLevels(config.getValue('logLevels'));
+        this.log = (msg, level) => {
+            logWriter.log(msg, level);
+        };
+    }
+
+    // Start the application
+    start(){
+        this.express.listen(this.port, this.host, 511, () => {
+            this.log(`Worker #${this.worker_id} started on ${this.host}:${this.port}`, 'info');
+        });
+    }
 };
-
-module.exports = new App();

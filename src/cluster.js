@@ -39,7 +39,7 @@ class Cluster {
         if (this.debug) {
             process._debugPort = `5858${id}`;
         }
-        app.start(id);
+        new app(id, this.config.host, this.config.port).start();
     }
 }
 
