@@ -1,7 +1,17 @@
+'use strict';
+
+/**
+ * On load event
+ */
 document.addEventListener('DOMContentLoaded', async() => {
     await updatePortfolio();
 });
 
+/**
+ * Get portfolio via api then update or create the table.
+ *
+ * @returns {Promise<void>}
+ */
 async function updatePortfolio() {
     // Get portfolio data
     let response = await fetch('/portfolio', {
@@ -17,7 +27,7 @@ async function updatePortfolio() {
     percents.sort(([, a], [, b]) => b - a);
 
     // Show total and portfolio id
-    $('#porfolio_id').text(`#${data.portfolio.user_id}`);
+    $('#portfolio_id').text(`#${data.portfolio.user_id}`);
     changeNumber($('#total'), data.portfolio.total);
 
     // Reset list and show assets ordered
@@ -56,6 +66,13 @@ async function updatePortfolio() {
     );
 }
 
+/**
+ * Util for changing a number
+ *  - Flash it red or green if the value has changed.
+ *
+ * @param {object} selector
+ * @param {string} value
+ */
 function changeNumber(selector, value) {
     let oldValue = numberFormat(selector.text());
     let newValue = numberFormat(value);
@@ -75,6 +92,12 @@ function changeNumber(selector, value) {
     }
 }
 
+/**
+ * Format a number for readability
+ *
+ * @param {string} number
+ * @returns {string}
+ */
 function numberFormat(number) {
     number = Number.parseFloat(number);
 
@@ -96,7 +119,7 @@ function showAlert(message) {
 }
 */
 
-// Templates
+// Portfolio asset template
 function assetTemplate(symbol, price, quantity, total) {
     return `<tr id="asset-${symbol}">
                 <td><i class="fas fa-minus"></i></td>

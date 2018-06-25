@@ -1,7 +1,7 @@
 'use strict';
 
 const Fs = require('fs');
-const Path = require('Path');
+const Path = require('path');
 const Minimist = require('minimist');
 
 /**

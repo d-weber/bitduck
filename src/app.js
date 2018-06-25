@@ -7,9 +7,10 @@ const ResponseTime = require('response-time');
 const BodyParser = require('body-parser');
 const CookieParser = require('cookie-parser');
 const UniqId = require('uniqid');
-const LogWriter = require('./libraries/logwriter');
 const Config = require('./libraries/config');
 const Redis = require('./libraries/redis');
+const Winston = require('winston');
+const StrfTime = require('strftime');
 
 /**
  * Application
@@ -33,7 +34,7 @@ module.exports = class App {
             'package.json'
         )).version;
 
-        this.setLog();
+        this.setLogger();
         this.setRedis();
         this.setExpressDependencies();
         this.setExpressResponseTime();
@@ -154,12 +155,29 @@ module.exports = class App {
         this.redis = new Redis(this.config.getValue('redis'));
     }
 
-    // Set logWriter
-    setLog() {
-        this.logWriter = new LogWriter(this.config.getValue('logLevels'));
+    // Set logger
+    setLogger() {
+        this.logger = Winston.createLogger({
+            level: this.config.getValue('logLevels'),
+            format: Winston.format.combine(
+                Winston.format.colorize(),
+                Winston.format.timestamp(),
+                Winston.format.printf(info => {
+                    let time = StrfTime('%F %T', new Date(info.timestamp));
+                    return `${time} ${info.level} >> ${info.message}`;
+                })
+            ),
+            transports: [
+                new Winston.transports.Console()
+            ],
+        });
+
         // Easy access
         this.log = (msg, level) => {
-            this.logWriter.log(msg, level);
+            this.logger.log({
+                level: level,
+                message: msg,
+            });
         };
     }
 
@@ -170,7 +188,7 @@ module.exports = class App {
                 `Worker #${this.workerId} started on ${this.host}:${
                     this.port
                 }`,
-                'info'
+                'warn'
             );
         });
     }
