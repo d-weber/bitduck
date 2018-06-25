@@ -1,8 +1,8 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const minimist = require('minimist');
+const Fs = require('fs');
+const Path = require('Path');
+const Minimist = require('minimist');
 
 /**
  * Config class
@@ -11,10 +11,10 @@ const minimist = require('minimist');
  * @type {Config}
  */
 module.exports = class Config {
-    constructor(root_path) {
-        this.rootPath = path.resolve(root_path);
+    constructor(rootPath) {
+        this.rootPath = Path.resolve(rootPath);
         try {
-            this.config = JSON.parse(fs.readFileSync(this.getConfigPath()));
+            this.config = JSON.parse(Fs.readFileSync(this.getConfigPath()));
         } catch (error) {
             console.log(`Config file error (${error.message})`);
             process.exit();
@@ -37,21 +37,18 @@ module.exports = class Config {
 
     // Return config gile path
     getConfigPath() {
-        let arg_path = this.getConfigPathFromArgs();
-        return arg_path
-            ? arg_path
-            : path.join(this.getRootPath(), 'config', 'config.json');
+        let argPath = this.getConfigPathFromArgs();
+        return argPath || Path.join(this.getRootPath(), 'config', 'config.json');
     }
 
     // Return process args
     getArgs() {
-        return minimist(process.argv.slice(2));
+        return Minimist(process.argv.slice(2));
     }
 
     // Return config path if set by args
     getConfigPathFromArgs() {
-        let path,
-            args = this.getArgs();
+        let args = this.getArgs();
 
         if (args.config) {
             return args.config;

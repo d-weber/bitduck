@@ -138,7 +138,7 @@
     "no-this-before-super": "error",
     "no-throw-literal": "error",
     "no-trailing-spaces": "error",
-    "no-undef": "error",
+    "no-undef": "warn",
     "no-undef-init": "error",
     "no-unexpected-multiline": "error",
     "no-unmodified-loop-condition": "error",
@@ -190,7 +190,7 @@
     "import/no-duplicates": "error",
     "import/no-webpack-loader-syntax": "error",
 
-    "node/no-deprecated-api": "error",
+    "node/no-deprecated-api": "warn",
     "node/process-exit-as-throw": "error",
 
     "promise/param-names": "error",

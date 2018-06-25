@@ -47,50 +47,50 @@ module.exports = new class Assets {
             Date.now() + 2592000 // 1 Month in seconds
         );
 
-        return await redis.zrange(this.getMostUsedKey(), 0, -1);
+        return redis.zrange(this.getMostUsedKey(), 0, -1);
     }
 
     /**
      * Get assets of a user via his id
      *
      * @param app
-     * @param user_id
+     * @param userId
      * @returns {Promise<*[]>}
      */
-    async get(app, user_id) {
+    async get(app, userId) {
         let redis = await app.redis.getConnection();
 
         // Get user assets
-        let raw_assets = await redis.zrange(
-            this.getUserAssetsKey(user_id),
+        let rawAssets = await redis.zrange(
+            this.getUserAssetsKey(userId),
             0,
             -1,
             'WITHSCORES'
         );
 
         // Shift key expire by 30 Days
-        redis.expire(this.getUserAssetsKey(user_id), 2592000);
+        redis.expire(this.getUserAssetsKey(userId), 2592000);
 
-        return app.redis.chunkZRangeResult(raw_assets);
+        return app.redis.chunkZRangeResult(rawAssets);
     }
 
     /**
      * Add an asset to a user
      *
      * @param app
-     * @param user_id
+     * @param userId
      * @param symbol
      * @param count
      * @returns {Promise<boolean>}
      */
-    async add(app, user_id, symbol, count) {
+    async add(app, userId, symbol, count) {
         let redis = await app.redis.getConnection();
 
         // Add asset in this user assets
-        await redis.zadd(this.getUserAssetsKey(user_id), count, symbol);
+        await redis.zadd(this.getUserAssetsKey(userId), count, symbol);
 
         // Shift key expire by 30 Days
-        redis.expire(this.getUserAssetsKey(user_id), 2592000);
+        redis.expire(this.getUserAssetsKey(userId), 2592000);
 
         return true;
     }
@@ -98,11 +98,11 @@ module.exports = new class Assets {
     /**
      * Return redis key of user assets
      *
-     * @param user_id
+     * @param userId
      * @returns {string}
      */
-    getUserAssetsKey(user_id) {
-        return `user:${user_id}:assets`;
+    getUserAssetsKey(userId) {
+        return `user:${userId}:assets`;
     }
 
     /**

@@ -17,12 +17,12 @@ module.exports = class Redis {
      *  - [a,b,c,d] => [[a,b], [c,d]]
      *
      * @param {Array} array
-     * @param {int} chunk_size
+     * @param {int} chunkSize
      * @return {Array}
      */
-    chunkZRangeResult(array, chunk_size = 2) {
+    chunkZRangeResult(array, chunkSize = 2) {
         return array.reduce((all, one, i) => {
-            const ch = Math.floor(i / chunk_size);
+            const ch = Math.floor(i / chunkSize);
             all[ch] = [].concat(all[ch] || [], one);
             return all;
         }, []);

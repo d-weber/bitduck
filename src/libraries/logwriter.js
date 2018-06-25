@@ -5,7 +5,7 @@ const util = require('util');
 
 module.exports = class LogWriter {
     constructor(levels = false) {
-        this.logLevels = levels ? levels : ['info', 'warn', 'error'];
+        this.logLevels = levels || ['info', 'warn', 'error'];
 
         return this.log(
             `Log levels : ${JSON.stringify(this.logLevels)}`,

@@ -3,7 +3,7 @@ const request = require('async-request');
 
 /**
  * Class CoinMarketCap
- *  - abstract symbol -> cmc_coin_id
+ *  - abstract symbol -> cmc_coinId
  *
  * Request coinmarketcap.com for prices and listings
  */
@@ -47,21 +47,21 @@ module.exports = new class CoinMarketCap {
      * @returns {Promise<int>}
      */
     async getPrice(symbol) {
-        let coin_id = await this.getIdBySymbol(symbol);
+        let coinId = await this.getIdBySymbol(symbol);
 
-        return await this.getPriceById(coin_id);
+        return this.getPriceById(coinId);
     }
 
     /**
      * Return current price of a cryp via id
      *  - Cache it for 30s
      *
-     * @param coin_id
+     * @param coinId
      * @returns {Promise<int>}
      */
-    async getPriceById(coin_id) {
+    async getPriceById(coinId) {
         let response = await request(
-            this.getApiUrl('ticker/' + coin_id + '/?convert=EUR')
+            this.getApiUrl('ticker/' + coinId + '/?convert=EUR')
         );
         let data = JSON.parse(response.body).data;
 
