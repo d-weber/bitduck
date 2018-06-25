@@ -6,7 +6,8 @@
 document.addEventListener('DOMContentLoaded', async() => {
     await updatePortfolio(true);
 
-    $('#add-asset').submit(async function(e) {
+    // Add or update asset
+    $('#add-asset').submit(async(e) => {
         e.preventDefault();
         let url = '/portfolio';
         let fetchOptions = {
@@ -29,6 +30,33 @@ document.addEventListener('DOMContentLoaded', async() => {
             } else {
                 showAlert('Added succesfully');
                 await updatePortfolio();
+            }
+        });
+    });
+
+    // Remove asset
+    $('.delete_button').click(async(e) => {
+        let symbol = e.target.id.substr(7);
+        let url = '/portfolio';
+        let fetchOptions = {
+            credentials: 'same-origin',
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                asset: {
+                    symbol: symbol,
+                },
+            }),
+        };
+
+        await fetch(url, fetchOptions).then(async(response) => {
+            if (response.status === 400) {
+                showAlert('Cannot remove this asset');
+            } else {
+                showAlert('Removed succesfully');
+                $(`#asset-${symbol}`).remove();
             }
         });
     });
@@ -158,7 +186,7 @@ function showAlert(message) {
 // Portfolio asset template
 function assetTemplate(symbol, price, quantity, total) {
     return `<tr id="asset-${symbol}">
-                <td><i class="fas fa-minus"></i></td>
+                <td><i class="fas fa-minus delete_button" id="delete-${symbol}"></i></td>
                 <td class="text-left"><span class="symbol">${symbol}</span></td>
                 <td class="text-right"><span class="price">${price}</span>€</td>
                 <td class="text-right"><span class="quantity">${quantity}</span></td>

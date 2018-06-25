@@ -97,6 +97,16 @@ module.exports = class App {
                 });
         });
 
+        // Remove asset from portfolio
+        this.express.delete('/portfolio', (req, res, next) => {
+            // Add asset to user Portfolio
+            return require('./controllers/portfolio')
+                .delete(this, req, res)
+                .catch((err) => {
+                    next(err);
+                });
+        });
+
         // Status
         this.express.get('/state', (req, res) => {
             res.send({

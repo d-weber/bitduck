@@ -75,7 +75,6 @@ module.exports = new class Portfolio {
      * @returns {Promise<void>}
      */
     async add(app, req, res) {
-        console.log(req.body);
         if (
             req.body.asset === undefined ||
             req.body.asset.symbol === undefined ||
@@ -105,6 +104,36 @@ module.exports = new class Portfolio {
                     quantity: quantity,
                     price: price,
                     total: price * quantity,
+                },
+            })
+        );
+    }
+
+    /**
+     * Remove asset from portfolio
+     *
+     * @param app
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    async delete(app, req, res) {
+        if (
+            req.body.asset === undefined ||
+            req.body.asset.symbol === undefined
+        ) {
+            throw new Error('Bad asset format');
+        }
+
+        let symbol = req.body.asset.symbol.toUpperCase();
+
+        // Remove it frol this user portfolio
+        await AssetsModel.remove(app, req.user_id, symbol);
+
+        res.send(
+            JSON.stringify({
+                removed: {
+                    symbol: symbol,
                 },
             })
         );

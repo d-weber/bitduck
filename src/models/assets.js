@@ -96,6 +96,27 @@ module.exports = new class Assets {
     }
 
     /**
+     * Add an asset to a user
+     *
+     * @param app
+     * @param userId
+     * @param symbol
+     * @param count
+     * @returns {Promise<boolean>}
+     */
+    async remove(app, userId, symbol) {
+        let redis = await app.redis.getConnection();
+
+        // Add asset in this user assets
+        await redis.zrem(this.getUserAssetsKey(userId), symbol);
+
+        // Shift key expire by 30 Days
+        redis.expire(this.getUserAssetsKey(userId), 2592000);
+
+        return true;
+    }
+
+    /**
      * Return redis key of user assets
      *
      * @param userId
