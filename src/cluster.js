@@ -1,47 +1,47 @@
-"use strict";
+'use strict';
 
 // Dependencies
-const config = require("./libraries/config");
-const app = require("./app.js");
-const cluster = require('cluster');
+const Config = require('./libraries/config');
+const App = require('./app.js');
+const Cluster = require('cluster');
 
 /**
  * Launch a cluster of n app.js workers
  */
-class Cluster {
+class ClusterApp {
     constructor() {
         // Set config
-        this.config = new config(`${__dirname}/..`).getValue('app');
+        this.config = new Config(`${__dirname}/..`).getValue('app');
 
         // Debug flag
-        this.debug = process.execArgv.indexOf("--debug") !== -1;
-
+        this.debug = process.execArgv.indexOf('--debug') !== -1;
+    }
+    start() {
         // Switch following thread type
-        if (cluster.isMaster) {
+        if (Cluster.isMaster) {
             this.createWorkers();
         } else {
-            this.startWorker(cluster.worker.id);
+            this.startWorker(Cluster.worker.id);
         }
     }
-    createWorkers(){
+    createWorkers() {
         // Star a worker for each core
         for (let i = 0; i < this.config.cores; i += 1) {
-            cluster.fork();
+            Cluster.fork();
         }
 
         // On worker exit, start another
-        cluster.on("exit", function() {
-            cluster.fork();
+        Cluster.on('exit', function() {
+            Cluster.fork();
         });
     }
-    startWorker(id){
+    startWorker(id) {
         if (this.debug) {
             process._debugPort = `5858${id}`;
         }
-        new app(id, this.config.host, this.config.port).start();
+        new App(id, this.config.host, this.config.port).start();
     }
 }
 
-new Cluster();
-
-
+let clusterApp = new ClusterApp();
+clusterApp.start();

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const redis = require('async-redis');
 
@@ -8,11 +8,9 @@ const redis = require('async-redis');
  * @type {Redis}
  */
 module.exports = class Redis {
-
-    constructor (config) {
+    constructor(config) {
         this.config = config;
     }
-
 
     /**
      * Utility to chunk redis zrange result
@@ -23,11 +21,11 @@ module.exports = class Redis {
      * @return {Array}
      */
     chunkZRangeResult(array, chunk_size = 2) {
-        return array.reduce((all,one,i) => {
-            const ch = Math.floor(i/chunk_size);
-            all[ch] = [].concat((all[ch]||[]),one);
-            return all
-        }, [])
+        return array.reduce((all, one, i) => {
+            const ch = Math.floor(i / chunk_size);
+            all[ch] = [].concat(all[ch] || [], one);
+            return all;
+        }, []);
     }
 
     /**
@@ -43,12 +41,12 @@ module.exports = class Redis {
             }
 
             this.connection = await redis.createClient({
-                'host': this.config.host,
-                'port': this.config.port,
-                'prefix': this.config.prefix,
+                host: this.config.host,
+                port: this.config.port,
+                prefix: this.config.prefix,
             });
 
-            this.connection.on("error", function (err) {
+            this.connection.on('error', function(err) {
                 throw new Error(err);
             });
 

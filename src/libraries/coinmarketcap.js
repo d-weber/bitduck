@@ -14,7 +14,7 @@ module.exports = new class CoinMarketCap {
      * @returns {Promise<Map>}
      */
     async getListing() {
-        if (typeof this.cmc_listing !== "undefined") {
+        if (typeof this.cmc_listing !== 'undefined') {
             return this.cmc_listing;
         }
 
@@ -23,8 +23,10 @@ module.exports = new class CoinMarketCap {
         let data = JSON.parse(response.body).data;
 
         // Transform coin raw data => map
-        return this.cmc_listing = new Map(data.map(coin => [coin.symbol, coin.id]));
-    };
+        return (this.cmc_listing = new Map(
+            data.map((coin) => [coin.symbol, coin.id])
+        ));
+    }
 
     /**
      * Return CMC id of a crypto
@@ -58,7 +60,9 @@ module.exports = new class CoinMarketCap {
      * @returns {Promise<int>}
      */
     async getPriceById(coin_id) {
-        let response = await request(this.getApiUrl('ticker/' + coin_id + '/?convert=EUR'));
+        let response = await request(
+            this.getApiUrl('ticker/' + coin_id + '/?convert=EUR')
+        );
         let data = JSON.parse(response.body).data;
 
         return data == null ? 0 : data.quotes.EUR.price;
@@ -73,4 +77,4 @@ module.exports = new class CoinMarketCap {
     getApiUrl(uri) {
         return 'https://api.coinmarketcap.com/v2/' + uri;
     }
-};
+}();

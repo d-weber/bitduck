@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const fs = require('fs');
 const path = require('path');
@@ -10,8 +10,8 @@ const minimist = require('minimist');
  *
  * @type {Config}
  */
-module.exports = class Config{
-    constructor (root_path) {
+module.exports = class Config {
+    constructor(root_path) {
         this.rootPath = path.resolve(root_path);
         try {
             this.config = JSON.parse(fs.readFileSync(this.getConfigPath()));
@@ -22,33 +22,36 @@ module.exports = class Config{
     }
 
     // Return root path of config file
-    getRootPath () {
+    getRootPath() {
         if (!this.rootPath) {
-            throw new Error("Config path not found");
+            throw new Error('Config path not found');
         }
 
         return this.rootPath;
     }
 
     // Return a value in config
-    getValue (key) {
+    getValue(key) {
         return this.config[key];
     }
 
     // Return config gile path
-    getConfigPath () {
+    getConfigPath() {
         let arg_path = this.getConfigPathFromArgs();
-        return arg_path ? arg_path : path.join(this.getRootPath(), 'config', 'config.json');
-    };
+        return arg_path
+            ? arg_path
+            : path.join(this.getRootPath(), 'config', 'config.json');
+    }
 
     // Return process args
     getArgs() {
         return minimist(process.argv.slice(2));
-    };
+    }
 
     // Return config path if set by args
-    getConfigPathFromArgs () {
-        let path, args = this.getArgs();
+    getConfigPathFromArgs() {
+        let path,
+            args = this.getArgs();
 
         if (args.config) {
             return args.config;
@@ -59,5 +62,5 @@ module.exports = class Config{
         }
 
         return false;
-    };
+    }
 };

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 // Dependencies
 const cmc = require('../libraries/coinmarketcap');
@@ -8,7 +8,6 @@ const cmc = require('../libraries/coinmarketcap');
  *  - use redis as cache
  */
 module.exports = new class Assets {
-
     /**
      * Cet current price of a asset via its symbol
      *
@@ -45,7 +44,7 @@ module.exports = new class Assets {
         await redis.zremrangebyscore(
             this.getUsedAssetsKey(),
             '-inf',
-            (Date.now() + 2592000) // 1 Month in seconds
+            Date.now() + 2592000 // 1 Month in seconds
         );
 
         return await redis.zrange(this.getMostUsedKey(), 0, -1);
@@ -62,7 +61,12 @@ module.exports = new class Assets {
         let redis = await app.redis.getConnection();
 
         // Get user assets
-        let raw_assets = await redis.zrange(this.getUserAssetsKey(user_id), 0, -1, 'WITHSCORES');
+        let raw_assets = await redis.zrange(
+            this.getUserAssetsKey(user_id),
+            0,
+            -1,
+            'WITHSCORES'
+        );
 
         // Shift key expire by 30 Days
         redis.expire(this.getUserAssetsKey(user_id), 2592000);
@@ -109,4 +113,4 @@ module.exports = new class Assets {
     getMostUsedKey() {
         return 'assets:most_used';
     }
-};
+}();

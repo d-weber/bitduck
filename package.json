@@ -2,9 +2,10 @@
   "name": "BitDuck",
   "version": "1.0.0",
   "description": "Crypto Portfolio Tracker",
-  "main": "index.js",
+  "main": "./src/cluster.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --ignore-path .gitignore .",
     "start": "node ./src/cluster.js"
   },
   "author": "",
@@ -17,8 +18,17 @@
     "express": "^4.16.3",
     "minimist": "^1.2.0",
     "npm": "^6.1.0",
+    "prettier": "^1.13.5",
     "request-promise": "^4.2.2",
     "response-time": "^2.3.1",
     "uniqid": "^5.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^5.0.0",
+    "eslint-config-strongloop": "^2.1.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0"
   }
 }
