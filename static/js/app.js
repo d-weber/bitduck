@@ -4,7 +4,8 @@
  * On load event
  */
 document.addEventListener('DOMContentLoaded', async() => {
-    await updatePortfolio();
+    await updatePortfolio(true);
+
     $('#add-asset').submit(async function(e) {
         e.preventDefault();
         let url = '/portfolio';
@@ -22,11 +23,12 @@ document.addEventListener('DOMContentLoaded', async() => {
             }),
         };
 
-        await fetch(url, fetchOptions).then((response) => {
+        await fetch(url, fetchOptions).then(async(response) => {
             if (response.status === 400) {
                 showAlert('Cannot add this asset');
             } else {
                 showAlert('Added succesfully');
+                await updatePortfolio();
             }
         });
     });
@@ -35,9 +37,10 @@ document.addEventListener('DOMContentLoaded', async() => {
 /**
  * Get portfolio via api then update or create the table.
  *
+ * @param {bool} perpetual
  * @returns {Promise<void>}
  */
-async function updatePortfolio() {
+async function updatePortfolio(perpetual = false) {
     // Get portfolio data
     let response = await fetch('/portfolio', {
         credentials: 'same-origin',
@@ -85,10 +88,12 @@ async function updatePortfolio() {
         }
     });
 
-    setTimeout(
-        await updatePortfolio,
-        9000 + Math.floor(Math.random() * Math.floor(1000))
-    );
+    if (perpetual) {
+        setTimeout(
+            await updatePortfolio,
+            9000 + Math.floor(Math.random() * Math.floor(1000))
+        );
+    }
 }
 
 /**
