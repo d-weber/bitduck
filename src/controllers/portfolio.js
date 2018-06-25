@@ -75,6 +75,7 @@ module.exports = new class Portfolio {
      * @returns {Promise<void>}
      */
     async add(app, req, res) {
+        console.log(req.body);
         if (
             req.body.asset === undefined ||
             req.body.asset.symbol === undefined ||

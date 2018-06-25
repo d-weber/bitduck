@@ -34,12 +34,11 @@
     margin-bottom: 0px;
 }
 
-#input-symbol {
-
+#add-asset .symbol {
     display: inline-block;
     width: 30%;
 }
-#input-qty {
+#add-asset .qty {
     display: inline-block;
     width: 20%;
 }

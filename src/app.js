@@ -50,7 +50,7 @@ module.exports = class App {
         this.express.use((err, req, res, _next) => {
             if (err) {
                 this.log(err.message, 'error');
-                res.status(500);
+                res.status(400);
                 res.send({
                     errors: {
                         message: err.message,

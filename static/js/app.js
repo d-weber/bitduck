@@ -5,6 +5,31 @@
  */
 document.addEventListener('DOMContentLoaded', async() => {
     await updatePortfolio();
+    $('#add-asset').submit(async function(e) {
+        e.preventDefault();
+        let url = '/portfolio';
+        let fetchOptions = {
+            credentials: 'same-origin',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                asset: {
+                    symbol: $('#add-asset .symbol').val(),
+                    quantity: $('#add-asset .qty').val(),
+                },
+            }),
+        };
+
+        await fetch(url, fetchOptions).then((response) => {
+            if (response.status === 400) {
+                showAlert('Cannot add this asset');
+            } else {
+                showAlert('Added succesfully');
+            }
+        });
+    });
 });
 
 /**
@@ -108,16 +133,22 @@ function numberFormat(number) {
     return number.toPrecision(3);
 }
 
-/*
+/**
+ * Affiche une alerte
+ *
+ * @param {string} message
+ * @param {string} type
+ */
 function showAlert(message) {
     let $alert = $('#alert');
     $alert.text(message);
     $alert.addClass('in');
+    $alert.removeClass('d-none');
     window.setTimeout(() => {
         $alert.removeClass('in');
+        $alert.addClass('d-none');
     }, 3000);
 }
-*/
 
 // Portfolio asset template
 function assetTemplate(symbol, price, quantity, total) {

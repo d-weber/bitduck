@@ -29,7 +29,7 @@
                     <span id="portfolio_id">#</span>
                 </div>
             </nav>
-            <div id="alert" class="alert alert-danger fade d-none" role="alert"></div>
+            <div id="alert" class="alert alert-primary fade d-none" role="alert"></div>
 
             <div class="card mb-3">
                 <h3 class="card-header bg-primary">
@@ -58,11 +58,11 @@
                         </tr>
                     </tbody>
                 </table>
-                <ul id="add-asset" class="list-group list-group-flush">
+                <ul class="list-group list-group-flush">
                     <li class="list-group-item text-right">
-                        <form>
-                            <input type="text" class="form-control" placeholder="SYMBOL" id="input-symbol">
-                            <input type="text" class="form-control" placeholder="QTY" id="input-qty">
+                        <form id="add-asset">
+                            <input type="text" class="form-control symbol" placeholder="SYMBOL">
+                            <input type="text" class="form-control qty" placeholder="QTY">
                             <button type="submit" class="btn btn-primary">ADD <i class="fas fa-plus-square"></i></button>
                         </form>
                     </li>
