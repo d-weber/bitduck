@@ -5,6 +5,9 @@ assets with live refresh.
 Every portfolio is lost after 30 days without access.
 - Use Redis and CoinMarketCap API
 - Use cookies for portfolio id
+
+![BitDuck](https://raw.githubusercontent.com/d-weber/bitduck/master/static/img/readme_preview.png)
+
 ### Cached :
 - CMC Listing `[SYMBOL => CMCID]` in CMC Lib
 - Crypto prices of CMC for 10s
