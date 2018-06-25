@@ -9,6 +9,9 @@ Every portfolio is lost after 30 days without access.
 - CMC Listing `[SYMBOL => CMCID]` in CMC Lib
 - Crypto prices of CMC for 10s
 - Portfolios assets for 30 days (reset every access)
+### Linter :
+- eslintrc from **https://github.com/standard/eslint-config-standard**
+- `npm run lint`
 ### ./config/config.json example :
 ````json
 {
